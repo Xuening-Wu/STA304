@@ -20,8 +20,6 @@ library(dplyr)
 library(knitr)
 ```
 
-Leyuan Chen: make some change in r studio
-
 ## Introduction
 
 <Here you should have a few paragraphs of text introducing the problem, getting the reader interested/ready for the rest of the report.>
