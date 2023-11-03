@@ -1,0 +1,538 @@
+---
+title: "ADD A DESCRIPTIVE TITLE"
+author: "GROUP NUMBER: ADD YOUR NAMES HERE"
+subtitle: "STA304 - Fall 2023 -Assignment 2"
+date: "Insert Date Here"
+output:
+  pdf_document: default
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(openintro)
+library(tidyverse)
+library(lme4)
+library(haven)
+library(ggplot2)
+library(broom)
+library(dplyr)
+library(knitr)
+```
+
+sure?
+
+## Introduction
+
+<Here you should have a few paragraphs of text introducing the problem, getting the reader interested/ready for the rest of the report.>
+
+<Introduce terminology.>
+
+<Highlight hypotheses.>
+
+<Optional: You can also include a description of each section of this report as a last paragraph.>
+
+```{r}
+survey_data %>% group_by(cps21_votechoice) %>% summarise(n = n())
+```
+
+```{r}
+survey_data %>% group_by(cps21_province) %>% summarise(n = n())
+```
+o Alberta (1)
+o British Columbia (2)
+o Manitoba (3)
+o New Brunswick (4)
+o Newfoundland and Labrador (5)
+o Northwest Territories (6) reject
+o Nova Scotia (7)
+o Nunavut (8) reject
+o Ontario (9)
+o Prince Edward Island (10)
+o Quebec (11)
+o Saskatchewan (12)
+o Yukon (13) reject
+
+```{r}
+census_data %>% group_by(province) %>% summarise(n = n())
+
+```
+
+
+
+```{r}
+survey_data %>% group_by(cps21_age) %>% summarise(n = n())
+census_data %>% group_by(age) %>% summarise(n = n())
+```
+```{r}
+sum(is.na(survey_data$cps21_children))
+survey_data %>% group_by(cps21_children) %>% summarise(n = n()) #remove 7 Don't know/ Prefer not to answer
+# in survey_data: 1 means 0 child, 2 means 1 child, ... 6 means five or more kids. 7 means unknow
+census_data %>% group_by(total_children) %>% summarise(n = n()) 
+
+```
+
+```{r}
+
+df_sv_income <- tibble(x=survey_data$cps21_income_number) # famaily income
+
+ggplot(data = df_sv_income, aes(x = x)) +
+  geom_histogram(bins = 1000,fill = "blue", color = "black") +
+  xlim(c(-1000,1000000)) +
+  labs(title = "Histogram",
+       x = "Value",
+       y = "Frequency")
+
+df_ces_income <- census_data %>% group_by(income_family) %>% summarise(n = n()) # famaily income
+
+ggplot(df_ces_income, aes(x = income_family, y = n)) +
+  geom_bar(stat = "identity", fill = "grey") +
+  labs(title = "Bar Plot",
+       x = "Category",
+       y = "Value") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+df_ces_income 
+```
+
+
+
+## Data
+
+<Type here a paragraph introducing the data, its context and as much info about the data collection process that you know.>
+
+
+```{r, include = FALSE}
+
+# Here you can load in and clean the census data (you may need to do the cleaning in a separate R script). 
+
+census_data <- read_csv("gss_clean.csv")
+
+# You may need additional chunks, in case you want to include some of the cleaning output.
+
+
+```
+
+
+
+<Type here a summary of the cleaning process (**only add in stuff beyond my original gss_cleaning.R code**). You only need to describe additional cleaning that you and your group did.> ] You will need to describe the cleaning you do to the survey data as well. 
+
+
+```{r, include = FALSE}
+
+# Here you can load in and clean the survey data. 
+# All cleaning must be done in the same Rmd file as your final report. 
+# All cleaning must not be shown in the submitted pdf. 
+# Setting the cleaning chunk to include = FALSE will allow for this. 
+
+load('ces2021.RData')
+
+## The data dictionary is found in '2021 Canadian Election Study Codebook.pdf'
+## In the data dictionary you can find the survey questions/responses corresponding to the column names in survey_data. 
+## For example 
+
+# cps21_age: Respondent age in years. Calculated from cps21_yob.
+## cps21_votechoice: "Which party do you think you will vote for? - Selected Choice"
+
+## Furthermore, when you select a variable in the survey_data, you will also see a description of the variable!. 
+## If it's a categorical variable, you'll also see how it's coded! 
+## For example: 
+
+# suvey_data$cps21_votechoice
+# attr(,"label")
+# [1] "Which party do you think you will vote for? - Selected Choice"
+# attr(,"format.stata")
+# [1] "%32.0g"
+# attr(,"class")
+# [1] "haven_labelled"
+# attr(,"labels")
+#                    Liberal Party               Conservative Party                              ndp 
+#                                1                                2                                3 
+#                   Bloc Québécois                      Green Party   Another party (please specify) 
+#                                4                                5                                6 
+# Don't know/ Prefer not to answer 
+#                                7 
+
+
+```
+
+
+
+
+```{r, include = FALSE}
+
+#### You will need to update/clean the code below based off the variables you want to use in your poststratification.
+
+survey_data_clean <- 
+  survey_data %>% 
+  filter(cps21_age >= 18) %>%
+  filter(cps21_citizenship == 1) %>%
+  mutate(vote_liberal = ifelse(cps21_votechoice==1, 1, 0),
+         vote_Conservative = ifelse(cps21_votechoice==2, 1, 0),
+         vote_ndp = ifelse(cps21_votechoice==3, 1, 0),
+         vote_Bloc = ifelse(cps21_votechoice==4, 1, 0),
+         vote_Green = ifelse(cps21_votechoice==5, 1, 0),
+         province = case_when(cps21_province == 1 ~ "Alberta",
+                            cps21_province == 2 ~ "British Columbia", 
+                            cps21_province == 3 ~ "Manitoba",
+                            cps21_province == 4 ~ "New Brunswick",
+                            cps21_province == 5 ~ "Newfoundland and Labrador",
+                            cps21_province == 6 ~ NA,
+                            cps21_province == 7 ~ "Nova Scotia",
+                            cps21_province == 8 ~ NA,
+                            cps21_province == 9 ~ "Ontario",
+                            cps21_province == 10 ~ "Prince Edward Island",
+                            cps21_province == 11 ~ "Quebec",
+                            cps21_province == 12 ~ "Saskatchewan",
+                            cps21_province == 13 ~ NA),
+         age = case_when(cps21_age >= 18 & cps21_age < 25 ~ "18-25",
+                         cps21_age >= 25 & cps21_age < 30 ~ "25-30",
+                         cps21_age >= 30 & cps21_age < 35 ~ "30-35",
+                         cps21_age >= 35 & cps21_age < 40 ~ "35-40",
+                         cps21_age >= 40 & cps21_age < 45 ~ "40-45",
+                         cps21_age >= 45 & cps21_age < 55 ~ "45-55",
+                         cps21_age >= 55 & cps21_age < 65 ~ "55-65",
+                         cps21_age >= 65  ~ "65 and above"
+                         ),
+         
+         income_family = case_when(cps21_income_number <= 25000 ~ "Less than $25,000",
+                            cps21_income_number >= 25000 & cps21_income_number <= 49999 ~ "$25,000 to $49,999", 
+                            cps21_income_number >= 50000 & cps21_income_number <= 74999 ~ "$50,000 to $74,999",
+                            cps21_income_number >= 75000 & cps21_income_number <= 99999 ~ "$75,000 to $99,999",
+                            cps21_income_number >= 100000 & cps21_income_number <= 124999 ~ "$100,000 to $ 124,999",
+                            cps21_income_number >= 125000 ~ "$125,000 and more"),
+         sex = case_when(cps21_genderid == 1 ~ "Male", 
+                         cps21_genderid == 2 ~ "Female",
+                         TRUE ~ NA)) %>% 
+  select(vote_liberal, 
+         vote_Conservative,
+         vote_ndp,
+         vote_Bloc,
+         vote_Green,
+         province, age, income_family, sex) %>%
+  na.omit()    # This might not be the correct thing to do. 
+
+census_data_clean <- census_data %>% 
+  filter(age >= 18) %>% 
+  filter(citizenship_status == "By birth" | citizenship_status =="By naturalization") %>%
+  mutate(age = case_when(age >= 18 & age < 25 ~ "18-25",
+                         age >= 25 & age < 30 ~ "25-30",
+                         age >= 30 & age < 35 ~ "30-35",
+                         age >= 35 & age < 40 ~ "35-40",
+                         age >= 40 & age < 45 ~ "40-45",
+                         age >= 45 & age < 55 ~ "45-55",
+                         age >= 55 & age < 65 ~ "55-65",
+                         age >= 65  ~ "65 and above"
+                         )
+         ) %>% 
+  select(province, age, income_family, sex) %>%
+  na.omit()
+
+
+```
+
+
+
+
+<Remember, you may want to use multiple datasets here, if you do end up using multiple data sets, or merging the data, be sure to describe this in the cleaning process and be sure to discuss important aspects of all the data that you used.>
+
+
+
+<Include a description of the important variables.> 
+
+```{r}
+
+# Use this to calculate some summary measures. 
+df_agetest <-
+  survey_data_clean %>%   
+  group_by(age) %>% 
+    summarise(p=mean(vote_liberal)) 
+
+ggplot(df_agetest, 
+       aes(y= age, x = p))+
+  geom_bar(stat = "identity", fill = "grey") +
+  coord_flip() +  # Flip the plot horizontally
+  labs(title = "..........",
+       x = "Mean support rate for liberal party
+       ",
+       y = "Age group") +  # Flip x and y axis labels
+  theme_minimal() 
+```
+
+```{r}
+tablesex <-
+  survey_data_clean %>%
+  group_by(sex) %>%
+  summarise("Counts" = n(), 
+            "Numver of Voting liberal party" =  sum(vote_liberal), 
+            "Support rate" = sum(vote_liberal)/Counts)
+kable(tablesex, caption = "")
+```
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=7, fig.height=3, fig.align='center'}
+df_incometest <-
+  survey_data_clean %>%   
+  group_by(income_family, province) %>% 
+    summarise(p=mean(vote_liberal), .groups = "drop") %>% mutate(Index = row_number())
+
+tb1 <- df_incometest %>% summarise(
+                                  min = min(p),
+                                  Q1 = quantile(p,0.25),
+                                  median = median(p),
+                                  Q3 = quantile(p,0.75),
+                                  max = max(p),
+                                  sd = sd(p)) 
+kable(tb1)
+
+
+ggplot(df_incometest, aes(x=Index, y=p))+
+  geom_bar(stat = "identity", fill = "grey") +
+  labs(title = "Bar Plot with Row Indices",
+       x = "Row Index",
+       y = "Mean Support Rate") +
+  theme_minimal()
+  
+```
+
+
+
+<Include a description of the numerical summaries. Remember you can use `r ` to use inline R code.>
+
+```{r, echo = TRUE, fig.width=7, fig.height=2, fig.align='center'}
+
+# Use this to create some plots. Should probably describe both the sample and population.
+
+
+  
+```
+
+<Include a clear description of the plot(s). I would recommend one paragraph for each plot.> 
+
+
+## Methods
+
+<Include some text introducing the methodology, maybe restating the problem/goal of this analysis.>
+```{r}
+
+```
+
+
+### Model Specifics
+<Here you can describe your regression model>
+
+<I will (incorrectly) be using a linear regression model to model the proportion of voters who will vote for the liberal party. This is a naive model. I will only be using age, which is recorded as a numeric variable, to model the probability of voting for the liberal party. The simple linear regression model I am using is:> 
+
+$$\begin{aligned}
+\text log(\frac{p}{1-p}) &= \beta_{0j} +  \beta_1 I^{\text{25-30age}}_{\text{ij}} + \beta_2 I^{\text{30-35age}}_{\text{ij}} + \beta_3 I^{\text{35-40age}}_{\text{ij}} + \beta_4 I^{\text{40-45age}}_{\text{ij}} + \beta_5 I^{\text{45-55age}}_{\text{ij}} + \beta_6 I^{\text{55-65age}}_{\text{ij}} + \beta_7 I^{\text{over65}}_{\text{ij}} + \beta_8 SEX_{\text{ij}}\\
+\beta_{0j} &\sim \text{Normal}(\mu_{\beta_0},\sigma_{\beta_0}^2)\\
+\end{aligned}$$
+
+<Where $y$ represents the ....  $\beta_0$ represents....>
+
+```{r}
+glimpse(survey_data_clean)
+```
+
+
+```{r}
+# Creating the Model
+mod1 <-
+  glmer(vote_liberal ~ age  +  sex + (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+# Model Results (to Report in Results section)
+summary(mod1)
+# OR
+#broom::tidy(mod1)
+```
+
+```{r}
+mod2 <-
+  glmer(vote_liberal ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+summary(mod2)
+coef(mod2)
+```
+
+$$\begin{aligned}
+\text log(\frac{p}{1-p}) &= \beta_{0j} +  \beta_1 I^{\text{25-30age}}_{\text{ij}} + \beta_2 I^{\text{30-35age}}_{\text{ij}} + \beta_3 I^{\text{35-40age}}_{\text{ij}} + \beta_4 I^{\text{40-45age}}_{\text{ij}} + \beta_5 I^{\text{45-55age}}_{\text{ij}} + \beta_6 I^{\text{55-65age}}_{\text{ij}} + \beta_7 I^{\text{over65}}_{\text{ij}} \\
+\beta_{0j} &\sim \text{Normal}(\mu_{\beta_0},\sigma_{\beta_0}^2)\\
+\end{aligned}$$
+
+
+
+## Post-Stratification 
+
+<Here you should explain the poststratification process>
+
+<In order to estimate the proportion of voters.....>
+
+<To put math/LaTeX inline just use one set of dollar signs. Example: $\hat{y}^{PS}$ >
+
+<To put math on its own line use two sets of dollar signs:>
+
+$$ include.your.mathematical.model.here.if.you.have.some.math.to.show $$
+
+
+All analysis for this report was programmed using `R version 4.0.2`. 
+
+
+
+## Results 
+
+```{r, include=FALSE}
+
+# Creating the Model
+# Model Results (to Report in Results section)
+# summary(model)
+# OR
+# broom::tidy(model)
+
+mod2_liberal <-
+  glmer(vote_liberal ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+mod2_Conservative <-
+  glmer(vote_Conservative ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+mod2_ndp <-
+  glmer(vote_ndp ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+mod2_Bloc <-
+  glmer(vote_Bloc ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+mod2_Green <-
+  glmer(vote_Green ~ age +  (1|province:income_family),
+      data = survey_data_clean,
+      family = binomial(link = "logit"))
+
+```
+
+```{r, include=FALSE}
+
+# Here I will perform the post-stratification calculation
+census_data_counts <- census_data_clean %>% 
+  group_by(age,province,income_family) %>% 
+  summarise(n=n(), .groups = "drop")
+
+########################################################
+census_data_counts$estimate_liberal <-
+  mod2_liberal %>%
+  predict(newdata = census_data_counts, type = "response")
+
+census_data_counts$estimate_Conservative <-
+  mod2_Conservative %>%
+  predict(newdata = census_data_counts, type = "response")
+
+census_data_counts$estimate_ndp <-
+  mod2_ndp %>%
+  predict(newdata = census_data_counts, type = "response")
+
+census_data_counts$estimate_Bloc <-
+  mod2_Bloc %>%
+  predict(newdata = census_data_counts, type = "response")
+
+census_data_counts$estimate_Green <-
+  mod2_Green %>%
+  predict(newdata = census_data_counts, type = "response")
+
+#####################################################################
+
+census_data_counts %>% 
+  mutate(liberal_predict_prop = estimate_liberal*n,
+         Conservative_predict_prop = estimate_Conservative*n,
+         ndp_predict_prop = estimate_ndp*n,
+         Bloc_predict_prop = estimate_Bloc*n,
+         Green_predict_prop = estimate_Green*n) %>%
+  summarise(liberal_predict = sum(liberal_predict_prop)/sum(n),
+            Conservative_predict = sum(Conservative_predict_prop)/sum(n),
+            ndp_predict = sum(ndp_predict_prop)/sum(n),
+            Bloc_predict = sum(Bloc_predict_prop)/sum(n),
+            Green_predict = sum(Green_predict_prop)/sum(n)
+            )
+
+```
+
+
+
+
+
+<Here you present your results. You may want to put them into a well formatted table. Be sure that there is some text describing the results.>
+
+
+<Note: Alternatively you can use the `knitr::kable` function to create a well formatted table from your code. See here: [https://rmarkdown.rstudio.com/lesson-7.html](https://rmarkdown.rstudio.com/lesson-7.html).>
+
+
+
+<Remember you can use `r ` to use inline R code.>
+
+
+```{r, include = FALSE}
+
+# Here you can include some relevant visualizations.
+census_data_ex <- census_data_clean %>% 
+  group_by(age, province,income_family) %>% 
+  summarise(n=n(), .groups = "drop")
+
+census_data_ex$estimate <-
+  mod2 %>%
+  predict(newdata = census_data_ex, type = "response")
+
+census_data_ex %>% group_by(province,income_family) %>%
+  summarise(support_rate = mean(estimate)) %>%
+  arrange(support_rate) %>% head(n=7)
+
+census_data_ex %>% group_by(province,income_family) %>%
+  summarise(support_rate = mean(estimate)) %>%
+  arrange(desc(support_rate)) %>% head(n=7)
+```
+
+<Include an explanation/interpretation of the visualizations. Make sure to comment on the appropriateness of the assumptions/results.>
+
+## Conclusions
+
+<Here you should give a summary of the Hypotheses, Methods and Results>
+
+<Highlight Key Results.>
+
+<Talk about big picture.>
+
+<Comment on any Weaknesses.>
+
+<Comment on Future Work/Next Steps>
+
+<End with a concluding paragraph to wrap up the report.>
+
+
+## Bibliography
+
+1. Grolemund, G. (2014, July 16) *Introduction to R Markdown*. RStudio. [https://rmarkdown.rstudio.com/articles_intro.html](https://rmarkdown.rstudio.com/articles_intro.html). (Last Accessed: April 4, 1991) 
+
+2.  RStudio Team. (2020). *RStudio: Integrated Development for R*. RStudio, PBC, Boston, MA URL [http://www.rstudio.com/](http://www.rstudio.com/).
+
+3.  Allaire, J.J., et. el. *References: Introduction to R Markdown*. RStudio. [https://rmarkdown.rstudio.com/docs/](https://rmarkdown.rstudio.com/docs/). (Last Accessed: April 4, 1991) 
+
+4. OpenAI. (2023). *ChatGPT (September 13 version) [Large language model]*. [https://chat.openai.com/chat](https://chat.openai.com/chat) (Last Accessed: September 13, 2023)
+
+\newpage
+
+## Appendix
+
+## Generative AI Statement
+
+Here is where you can explain your usage of Generative AI tool(s). Be sure to reference it. For instance, including something like: 
+
+I used the following generative artificial intelligence (AI) tool: Bing AI Version 2.0 for Chrome [4]. I used the tool only in the Results section of this assignment and I gave it the following prompt of `What should I eat for breakfast?` and it gave me a list of 10 breakfast items which I then asked it to: `Please only list breakfast items that do not include eggs`. I then chose my 3 favourite items from the produced list and included those in the Results section.
+
+
+### Supplementary Materials
+
+<Here you can include any additional plots, tables, derivations, etc.>
