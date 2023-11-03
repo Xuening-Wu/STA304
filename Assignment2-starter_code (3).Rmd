@@ -566,6 +566,9 @@ census_data_ex %>% group_by(province,income_family) %>%
 
 <Include an explanation/interpretation of the visualizations. Make sure to comment on the appropriateness of the assumptions/results.>
 
+
+
+
 ## Conclusions
 
 <Here you should give a summary of the Hypotheses, Methods and Results>
