@@ -10,6 +10,10 @@ output:
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+#install.packages("report")
+library(report)   
+library(sjPlot)
+library(sjPlot)
 library(openintro)
 library(tidyverse)
 library(lme4)
@@ -18,6 +22,8 @@ library(ggplot2)
 library(broom)
 library(dplyr)
 library(knitr)
+load('ces2021.RData')
+census_data <- read_csv("gss_clean.csv")
 ```
 
 ## Introduction
@@ -267,7 +273,7 @@ kable(tablesex, caption = "")
 ```
 
 
-```{r, warning=FALSE, message=FALSE, fig.width=7, fig.height=3, fig.align='center'}
+```{r, warning=FALSE, message=FALSE}
 df_incometest <-
   survey_data_clean %>%   
   group_by(income_family, province) %>% 
@@ -307,18 +313,29 @@ ggplot(df_incometest, aes(x=Index, y=p))+
 <Include a clear description of the plot(s). I would recommend one paragraph for each plot.> 
 
 
-## Methods
+## Methods 
+To predict which parties will win the selection, we fit a logistic regression with random-effect on intercept using the glmer function from the "lme4" package and logit as link function.
 
-<Include some text introducing the methodology, maybe restating the problem/goal of this analysis.>
-```{r}
+This specific model is designed to analyze the relationship between the dependent binary variable (vote the party or not) and several independent variables, including age, sex, and a random effect related to the combination of province and income_family. 
 
-```
+The response variable: vote_liberal/vote_Conservative/vote_ndp/vote_Bloc/vote_Green is binary, indicating whether an individual voted for the that corresponding party (1 for yes, 0 for no).
+
+Thus, we will have 5 models with same structure but different responses. Each of them can estimate the probability of voting its corresponding party. 
+
+We will apply post-stratification for the estimates from 5 models to adjusting for the issues of non-response or non-probability sampling. After that, we can get 5 $\hat{y}^{P S}$: the overall estimated proportion of voting for each party. The party with highest proportion will possibly win the selection. 
 
 
 ### Model Specifics
 <Here you can describe your regression model>
 
-<I will (incorrectly) be using a linear regression model to model the proportion of voters who will vote for the liberal party. This is a naive model. I will only be using age, which is recorded as a numeric variable, to model the probability of voting for the liberal party. The simple linear regression model I am using is:> 
+Assumptions: \
+Linearity of the Log-Odds: The logistic link function used in the model assumes that the relationship between the predictors and the log-odds of the response variable is linear. It's essential to check this assumption by examining residual plots and assessing linearity.
+
+Independence of Observations: Each observation in your dataset should be independent of the others. This means that the outcomes of one individual should not be influenced by the outcomes of other individuals. In practice, you should check for any clustering or dependencies in the data, especially with the random effects structure (1|province:income_family).
+
+Adequate Sample Size: The model may require a sufficient sample size to produce reliable parameter estimates, especially when dealing with random effects. Inadequate sample sizes can lead to unstable or unreliable estimates.
+
+Appropriate Random Effects Structure: The specification of random effects, in this case, (1|province:income_family), should accurately reflect the structure of the data. You need to ensure that it is justified and that it accounts for any correlations or nesting in the data
 
 $$\begin{aligned}
 \text log(\frac{p}{1-p}) &= \beta_{0j} +  \beta_1 I^{\text{25-30age}}_{\text{ij}} + \beta_2 I^{\text{30-35age}}_{\text{ij}} + \beta_3 I^{\text{35-40age}}_{\text{ij}} + \beta_4 I^{\text{40-45age}}_{\text{ij}} + \beta_5 I^{\text{45-55age}}_{\text{ij}} + \beta_6 I^{\text{55-65age}}_{\text{ij}} + \beta_7 I^{\text{over65}}_{\text{ij}} + \beta_8 SEX_{\text{ij}}\\
@@ -327,10 +344,6 @@ $$\begin{aligned}
 
 <Where $y$ represents the ....  $\beta_0$ represents....>
 
-```{r}
-glimpse(survey_data_clean)
-```
-
 
 ```{r}
 # Creating the Model
@@ -338,20 +351,26 @@ mod1 <-
   glmer(vote_liberal ~ age  +  sex + (1|province:income_family),
       data = survey_data_clean,
       family = binomial(link = "logit"))
-
-# Model Results (to Report in Results section)
-summary(mod1)
-# OR
-#broom::tidy(mod1)
 ```
 
-```{r}
+```{r, fig.width= 3, include=FALSE}
+library(report)
+# report(mod1)
+#province:income_family
+report_table(mod1)[,1:9]
+summary(mod1)
+```
+
+
+
+```{r, include=F}
 mod2 <-
   glmer(vote_liberal ~ age +  (1|province:income_family),
       data = survey_data_clean,
       family = binomial(link = "logit"))
 summary(mod2)
-coef(mod2)
+
+report_table(mod2)[,1:9]
 ```
 
 $$\begin{aligned}
@@ -379,6 +398,52 @@ All analysis for this report was programmed using `R version 4.0.2`.
 
 
 ## Results 
+
+```{r, include=F}
+report(mod1)
+report(mod2)
+```
+
+
+
+
+Parameter          | Coefficient |         95% CI |      z |      p | Effects |                 
+-------------------|-------------|----------------|--------|--------|---------|
+(Intercept)        |       -1.51 | [-1.71, -1.31] | -14.66 | < .001 |   fixed |                       
+age [25-30]        |        0.05 | [-0.17,  0.28] |   0.48 | 0.633  |   fixed |                       
+age [30-35]        |        0.37 | [ 0.16,  0.58] |   3.40 | < .001 |   fixed |                       
+age [35-40]        |        0.51 | [ 0.29,  0.72] |   4.66 | < .001 |   fixed |                       
+age [40-45]        |        0.41 | [ 0.20,  0.62] |   3.77 | < .001 |   fixed |                       
+age [45-55]        |        0.47 | [ 0.28,  0.65] |   4.85 | < .001 |   fixed |                       
+age [55-65]        |        0.57 | [ 0.38,  0.75] |   6.04 | < .001 |   fixed |                       
+age [65 and above] |        0.65 | [ 0.47,  0.83] |   7.12 | < .001 |   fixed |                       
+sex [Male]         |       -0.03 | [-0.10,  0.05] |  -0.70 | 0.484  |   fixed |                       
+province:income_family|     0.39 |                |        |        |  random | 
+                   |             |                |        |        |         |                       
+AIC                |     16535.3 |                |        |        |         |                       
+BIC                |     16611.1 |                |        |        |         |                       
+logLik             |     -8257.6 |                |        |        |         |                       
+Table: Summary for model 1
+
+
+
+
+Parameter          | Coefficient |         95% CI |      z |      p | Effects |                  
+-------------------|-------------|----------------|--------|--------|---------|
+(Intercept)        |       -1.52 | [-1.72, -1.32] | -14.79 | < .001 |   fixed |                       
+age [25-30]        |        0.05 | [-0.17,  0.28] |   0.47 | 0.641  |   fixed |                       
+age [30-35]        |        0.37 | [ 0.15,  0.58] |   3.38 | < .001 |   fixed |                       
+age [35-40]        |        0.50 | [ 0.29,  0.72] |   4.63 | < .001 |   fixed |                       
+age [40-45]        |        0.40 | [ 0.19,  0.62] |   3.73 | < .001 |   fixed |                       
+age [45-55]        |        0.46 | [ 0.27,  0.65] |   4.81 | < .001 |   fixed |                       
+age [55-65]        |        0.56 | [ 0.38,  0.74] |   6.00 | < .001 |   fixed |                       
+age [65 and above] |        0.65 | [ 0.47,  0.82] |   7.09 | < .001 |   fixed |                       
+province:income_family|     0.39 |                |        |        |  random | 
+                   |             |                |        |        |         |                       
+AIC                |     16533.8 |                |        |        |         |                       
+BIC                |     16602.0 |                |        |        |         |                       
+logLik             |     -8257.9 |                |        |        |         |     
+Table: Summary for model 2
 
 ```{r, include=FALSE}
 
@@ -414,6 +479,11 @@ mod2_Green <-
       family = binomial(link = "logit"))
 
 ```
+
+
+
+
+
 
 ```{r, include=FALSE}
 
