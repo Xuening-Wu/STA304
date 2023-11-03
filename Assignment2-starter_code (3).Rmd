@@ -18,6 +18,8 @@ library(ggplot2)
 library(broom)
 library(dplyr)
 library(knitr)
+census_data <- read_csv("gss_clean.csv")
+load('ces2021.RData')
 ```
 
 ## Introduction
