@@ -172,8 +172,6 @@ survey_data_clean <-
   mutate(vote_liberal = ifelse(cps21_votechoice==1, 1, 0),
          vote_Conservative = ifelse(cps21_votechoice==2, 1, 0),
          vote_ndp = ifelse(cps21_votechoice==3, 1, 0),
-         vote_Bloc = ifelse(cps21_votechoice==4, 1, 0),
-         vote_Green = ifelse(cps21_votechoice==5, 1, 0),
          province = case_when(cps21_province == 1 ~ "Alberta",
                             cps21_province == 2 ~ "British Columbia", 
                             cps21_province == 3 ~ "Manitoba",
@@ -209,8 +207,6 @@ survey_data_clean <-
   select(vote_liberal, 
          vote_Conservative,
          vote_ndp,
-         vote_Bloc,
-         vote_Green,
          province, age, income_family, sex) %>%
   na.omit()    # This might not be the correct thing to do. 
 
@@ -317,11 +313,11 @@ To predict which parties will win the selection, we fit a logistic regression wi
 
 This specific model is designed to analyze the relationship between the dependent binary variable (vote the party or not) and several independent variables, including age, sex, and a random effect related to the combination of province and income_family. 
 
-The response variable: vote_liberal/vote_Conservative/vote_ndp/vote_Bloc/vote_Green is binary, indicating whether an individual voted for the that corresponding party (1 for yes, 0 for no).
+The response variable: vote_liberal/vote_Conservative/vote_ndp, indicating whether an individual voted for the that corresponding party (1 for yes, 0 for no).
 
-Thus, we will have 5 models with same structure but different responses. Each of them can estimate the proportion of voting its corresponding party. 
+Thus, we will have 3 models with same structure but different responses. Each of them can estimate the proportion of voting its corresponding party. 
 
-We will apply post-stratification for the estimates from 5 models to adjusting for the issues of non-response or non-probability sampling. After that, we can get 5 $\hat{y}^{P S}$: the overall weighted estimated proportion of voting for each party. The party with highest proportion will possibly win the selection. 
+We will apply post-stratification for the estimates from 3 models to adjusting for the issues of non-response or non-probability sampling. After that, we can get 3 $\hat{y}^{P S}$: the overall weighted estimated proportion of voting for each party. The party with highest proportion will possibly win the selection. 
 
 
 ### Model Specifics
@@ -393,7 +389,7 @@ $$
 
 Then, fit our regression model for each strata to get the estimates and weight these estimates by its sample size based on the formula above. $\widehat{y}_{j}$ is the estimated proportion of voting one specific party for jth strata. $N_{j}$ is the sample size for jth strata. $\sum N_{j}$ is the total size in cleaned census data. Last but not least, $\hat{y}^{P S}$ is the overall weighed proportion of voting one specific party by Post-Stratification.
 
-Since we have 5 regression models, we will get the proportion of voting the 5 party by Post-Stratification. The party with highest proportion will possibly win the selection. 
+Since we have 3 regression models, we will get the proportion of voting the 3 party by Post-Stratification. The party with highest proportion will possibly win the selection. 
 
 
 All analysis for this report was programmed using `R version 4.0.2`. 
@@ -485,16 +481,6 @@ mod2_ndp <-
       data = survey_data_clean,
       family = binomial(link = "logit"))
 
-mod2_Bloc <-
-  glmer(vote_Bloc ~ age +  (1|province:income_family),
-      data = survey_data_clean,
-      family = binomial(link = "logit"))
-
-mod2_Green <-
-  glmer(vote_Green ~ age +  (1|province:income_family),
-      data = survey_data_clean,
-      family = binomial(link = "logit"))
-
 ```
 
 
@@ -522,27 +508,16 @@ census_data_counts$estimate_ndp <-
   mod2_ndp %>%
   predict(newdata = census_data_counts, type = "response")
 
-census_data_counts$estimate_Bloc <-
-  mod2_Bloc %>%
-  predict(newdata = census_data_counts, type = "response")
-
-census_data_counts$estimate_Green <-
-  mod2_Green %>%
-  predict(newdata = census_data_counts, type = "response")
 
 #####################################################################
 
 census_data_counts %>% 
   mutate(liberal_predict_prop = estimate_liberal*n,
          Conservative_predict_prop = estimate_Conservative*n,
-         ndp_predict_prop = estimate_ndp*n,
-         Bloc_predict_prop = estimate_Bloc*n,
-         Green_predict_prop = estimate_Green*n) %>%
+         ndp_predict_prop = estimate_ndp*n) %>%
   summarise(liberal_predict = sum(liberal_predict_prop)/sum(n),
             Conservative_predict = sum(Conservative_predict_prop)/sum(n),
-            ndp_predict = sum(ndp_predict_prop)/sum(n),
-            Bloc_predict = sum(Bloc_predict_prop)/sum(n),
-            Green_predict = sum(Green_predict_prop)/sum(n)
+            ndp_predict = sum(ndp_predict_prop)/sum(n)
             )
 
 ```
