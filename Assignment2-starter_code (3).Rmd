@@ -484,10 +484,7 @@ mod2_ndp <-
 
 ```
 
-
-
-
-
+With our final model determined, we then performed poststratification using population demographics. As described in the Methods Section, we poststratified our population with respects to age groups, provinces, and family incomes. Hence, we had a total of $8 * 6 * 12 = 576$ strata (8 age groups, 6 levels of family income, 12 provinces). The estimated means ($\widehat{y}_{j}$) for each stratum ($j$) were calculated, but due to the large number of strata, we will not present the estimates. *should we attach the census_data_counts? if so, mention supplementary material section*
 
 ```{r, include=FALSE}
 
@@ -508,33 +505,34 @@ census_data_counts$estimate_Conservative <-
 census_data_counts$estimate_ndp <-
   mod2_ndp %>%
   predict(newdata = census_data_counts, type = "response")
+```
 
+Then, we calculated the $\hat{y}^{P S}$ for the three major political parties, i.e., Liberal, Conservative, and NPD. The results were shown in the following table: 
 
-#####################################################################
-
-census_data_counts %>% 
+```{r}
+census_table <- census_data_counts %>% 
   mutate(liberal_predict_prop = estimate_liberal*n,
          Conservative_predict_prop = estimate_Conservative*n,
          ndp_predict_prop = estimate_ndp*n) %>%
-  summarise(liberal_predict = sum(liberal_predict_prop)/sum(n),
+  summarise(liberal_predict = sum(liberal_predict_prop)/sum(n), #proportions
             Conservative_predict = sum(Conservative_predict_prop)/sum(n),
             ndp_predict = sum(ndp_predict_prop)/sum(n)
-            )
+            ) %>%
+  pivot_longer(
+    cols = everything(), 
+    names_to = "Political Party", 
+    values_to = "Predicted Proportion of Votes"
+  ) %>%
+  mutate(`Political Party` = c("Liberal", "Conservative", "NDP"))
 
+kable(census_table)
 ```
 
+As can be seen from the table, our models predicted that there will be `r liberal_predict * 100`% voters voting for the Liberal Party, `r Conservative_predict * 100`% voting for the Conservative Party, and `r ndp_predict * 100`% voting for the NDP. Together, the three major political parties take approximately `r (liberal_predict + Conservative_predict + ndp_predict) *100`% of the total votes, suggesting little likelihood that other parties will have votes higher than any of the three. Therefore, the prediction indicates that the Liberal Party is the most likely party to win the election because it has the largest predicted proportion of voters voting for them. 
 
+Our results are plausible both methodologically and practically. From the methodological perspective, we carefully selected our potential predictor variables and calibrated our model by removing redundant variable(s). Further, we employed multi-level regression method when building our model, which takes random variations at both individual and group levels (e.g., age groups), enabling precise pinpoints at the estimates. When generating prediction, we stratified the population with respect to all of the three predictor variables (i.e., age groups, provinces, and levels of income). With the thorough and refined methods, we are confident with our predictions. 
 
-
-
-<Here you present your results. You may want to put them into a well formatted table. Be sure that there is some text describing the results.>
-
-
-<Note: Alternatively you can use the `knitr::kable` function to create a well formatted table from your code. See here: [https://rmarkdown.rstudio.com/lesson-7.html](https://rmarkdown.rstudio.com/lesson-7.html).>
-
-
-
-<Remember you can use `r ` to use inline R code.>
+More importantly, our predictions were consistent with the real-world situation. For example, results from 2019 Canadian Election were that the Liberal Party won the election with the largest proportion of votes (39.47%), followed by the Conservative Party (31.89%) and the NDP (19.71%). The trend showed in 2019 election results was identical to the trend in our prediction. Therefore, with calibrated statistical methods and real-world confirmations, our predictions should be of relatively high reliability and plausibility. 
 
 
 ```{r, include = FALSE}
