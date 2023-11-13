@@ -274,14 +274,6 @@ df_incometest <-
   group_by(income_family, province) %>% 
     summarise(p=mean(vote_liberal), .groups = "drop") %>% mutate(Index = row_number())
 
-tb1 <- df_incometest %>% summarise(
-                                  min = min(p),
-                                  Q1 = quantile(p,0.25),
-                                  median = median(p),
-                                  Q3 = quantile(p,0.75),
-                                  max = max(p),
-                                  sd = sd(p)) 
-kable(tb1)
 
 
 ggplot(df_incometest, aes(x=Index, y=p))+
@@ -302,10 +294,56 @@ ggplot(df_incometest, aes(x=Index, y=p))+
 # Use this to create some plots. Should probably describe both the sample and population.
 
 
-  
+survey_province_prop <- 
+  survey_data_clean %>% group_by(province) %>%
+  summarise(n = n()) %>% 
+  mutate('propotion in survey data' = n/sum(n))
+
+census_province_prop <- 
+  census_data_clean %>% group_by(province) %>%
+  summarise(n = n()) %>% 
+  mutate('propotion in census data' = n/sum(n))  
+
+kable(cbind(survey_province_prop[,1], survey_province_prop[,3], census_province_prop[,3]))
 ```
 
-<Include a clear description of the plot(s). I would recommend one paragraph for each plot.> 
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+survey_age_prop <- 
+  survey_data_clean %>% group_by(age) %>%
+  summarise(n = n()) %>% 
+  mutate('propotion in survey data' = n/sum(n))
+
+census_age_prop <- 
+  census_data_clean %>% group_by(age) %>%
+  summarise(n = n()) %>% 
+  mutate('propotion in census data' = n/sum(n))  
+
+age_prop <-
+  cbind(survey_age_prop[,1], survey_age_prop[,3], census_age_prop[,3])
+
+age_prop
+
+p1 <-
+  ggplot(age_prop, aes(x=age, y=`propotion in survey data`))+
+  geom_bar(stat = "identity", fill = "grey") +
+  labs(title = "The propotion of each group in survey data",
+       x = "age group",
+       y = "propotion") +
+  theme_minimal()
+
+p2 <-
+  ggplot(age_prop, aes(x=age, y=`propotion in census data`))+
+  geom_bar(stat = "identity", fill = "grey") +
+  labs(title = "The propotion of each group in census data",
+       x = "age group",
+       y = "propotion") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol = 1)
+```
 
 
 ## Methods 
@@ -313,11 +351,11 @@ To predict which parties will win the election, we fit a logistic regression wit
 
 This specific model is designed to analyze the relationship between the dependent binary variable (vote the party or not) and several independent variables, including age, sex, and a random effect related to the combination of province and family income. 
 
-The 3 binary response variables denote whether an individual voted for the that corresponding party (1 for yes, 0 for no).
+The 5 binary response variables denote whether an individual voted for the that corresponding party (1 for yes, 0 for no).
 
-Thus, we will have 3 models with same structure but different responses. Each of them can estimate the proportion of voting its corresponding party. 
+Thus, we will have 5 models with same structure but different responses. Each of them can estimate the proportion of voting its corresponding party. 
 
-We will apply post-stratification for the estimates from 3 models to adjust for the issues of non-response or non-probability sampling. After that, we can get 3 $\hat{y}^{P S}$: the overall weighted estimated proportion of voting for each party. The party with the highest proportion will be predicted to win the election. 
+We will apply post-stratification for the estimates from 5 models to adjust for the issues of non-response or non-probability sampling. After that, we can get 5 $\hat{y}^{P S}$: the overall weighted estimated proportion of voting for each party. The party with the highest proportion will be predicted to win the election. 
 
 
 ### Model Specifics
@@ -389,7 +427,7 @@ $$
 
 Then, fit our regression model for each stratum to get the estimates and weight these estimates by its sample size based on the formula above. $\widehat{y}_{j}$ is the estimated proportion of voting one specific party for jth stratum. $N_{j}$ is the sample size for jth stratum. $\sum N_{j}$ is the total size in cleaned census data. Last but not least, $\hat{y}^{P S}$ is the overall weighed proportion of voting one specific party by Post-Stratification.
 
-Since we have 3 regression models, we will get the proportion of voting the 3 parties by Post-Stratification. The party with the highest proportion will be predicted to win the election. 
+Since we have 5 regression models, we will get the proportion of voting the 5 parties by Post-Stratification. The party with the highest proportion will be predicted to win the election. 
 
 
 All analysis for this report was programmed using `R version 4.0.2`. 
@@ -401,7 +439,7 @@ All analysis for this report was programmed using `R version 4.0.2`.
 report(mod1)
 report(mod2)
 ```
-Since the models for predicting all 3 major political parties will be the same, for simplicity, we will showcase our model selection process using the model for Liberal party only. 
+Since the models for predicting all 5 major political parties will be the same, for simplicity, we will showcase our model selection process using the model for Liberal party only. 
 
 After we fit the initial model:
 $$\begin{aligned}
