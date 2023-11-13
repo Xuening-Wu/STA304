@@ -240,9 +240,8 @@ ggplot(df_agetest,
        aes(y= age, x = p))+
   geom_bar(stat = "identity", fill = "grey") +
   coord_flip() +  # Flip the plot horizontally
-  labs(title = "..........",
-       x = "Mean support rate for liberal party
-       ",
+  labs(title = "Age vs. Mean Support Rate for Liberal Party",
+       x = "Mean support rate for liberal party",
        y = "Age group") +  # Flip x and y axis labels
   theme_minimal() 
 ```
@@ -252,9 +251,9 @@ tablesex <-
   survey_data_clean %>%
   group_by(sex) %>%
   summarise("Counts" = n(), 
-            "Numver of Voting liberal party" =  sum(vote_liberal), 
+            "Number of Voting liberal party" =  sum(vote_liberal), 
             "Support rate" = sum(vote_liberal)/Counts)
-kable(tablesex, caption = "")
+kable(tablesex, caption = "Summary of Support for Liberal Party by Gender")
 ```
 
 
@@ -268,7 +267,7 @@ df_incometest <-
 
 ggplot(df_incometest, aes(x=Index, y=p))+
   geom_bar(stat = "identity", fill = "grey") +
-  labs(title = "Bar Plot with Row Indices",
+  labs(title = "Mean Support Rate for Liberal Party by Income and Province",
        x = "Row Index",
        y = "Mean Support Rate") +
   theme_minimal()
@@ -294,7 +293,7 @@ census_province_prop <-
   summarise(n = n()) %>% 
   mutate('propotion in census data' = n/sum(n))  
 
-kable(cbind(survey_province_prop[,1], survey_province_prop[,3], census_province_prop[,3]))
+kable(cbind(survey_province_prop[,1], survey_province_prop[,3], census_province_prop[,3]), caption = "Proportion of Respondents by Province in Survey and Census Data")
 ```
 
 
@@ -405,7 +404,7 @@ report_table(mod2)[,1:9]
 
 ## Post-Stratification 
 
-Post-stratification is a technique used in survey analysis to improve the accuracy of estimates by adjusting for differences in non-probability sampling and non-response bias. It involves dividing the population into strata based on certain characteristics (variables) and then weighting the observations in each stratum to account for different estimates and sum them up to get a overall average.
+$$Post-stratification is a technique used in survey analysis to improve the accuracy of estimates by adjusting for differences in non-probability sampling and non-response bias. It involves dividing the population into strata based on certain characteristics (variables) and then weighting the observations in each stratum to account for different estimates and sum them up to get a overall average.$$
 
 In our logistic regression with random-effect on intercept for predicting voting proportion, we can apply post-stratification.
 
