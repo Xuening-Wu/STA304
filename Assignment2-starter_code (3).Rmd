@@ -41,6 +41,7 @@ survey_data %>% group_by(cps21_votechoice) %>% summarise(n = n())
 
 ```{r}
 survey_data %>% group_by(cps21_province) %>% summarise(n = n())
+census_data %>% group_by(province) %>% summarise(n = n())
 ```
 o Alberta (1)
 o British Columbia (2)
@@ -56,24 +57,13 @@ o Quebec (11)
 o Saskatchewan (12)
 o Yukon (13) reject
 
-```{r}
-census_data %>% group_by(province) %>% summarise(n = n())
-
-```
-
 
 
 ```{r}
 survey_data %>% group_by(cps21_age) %>% summarise(n = n())
 census_data %>% group_by(age) %>% summarise(n = n())
 ```
-```{r}
-sum(is.na(survey_data$cps21_children))
-survey_data %>% group_by(cps21_children) %>% summarise(n = n()) #remove 7 Don't know/ Prefer not to answer
-# in survey_data: 1 means 0 child, 2 means 1 child, ... 6 means five or more kids. 7 means unknow
-census_data %>% group_by(total_children) %>% summarise(n = n()) 
 
-```
 
 ```{r}
 
