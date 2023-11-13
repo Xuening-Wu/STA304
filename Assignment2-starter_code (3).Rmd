@@ -567,9 +567,12 @@ More importantly, our predictions were consistent with the real-world situation.
 
 ## Generative AI Statement
 
-Here is where you can explain your usage of Generative AI tool(s). Be sure to reference it. For instance, including something like: 
+I used the following generative artificial intelligence (AI) tool: ChatGPT [4]. 
 
-I used the following generative artificial intelligence (AI) tool: Bing AI Version 2.0 for Chrome [4]. I used the tool only in the Results section of this assignment and I gave it the following prompt of `What should I eat for breakfast?` and it gave me a list of 10 breakfast items which I then asked it to: `Please only list breakfast items that do not include eggs`. I then chose my 3 favourite items from the produced list and included those in the Results section.
+We used the tool in the introduction section of this assignment: \
+With the prompt of `What are 3 major political parties in canada?` \
+ChatGPT rely us: `Liberal Party and Conservative Party and the New Democratic Party`. 
+Then we use this as one of the reference to choose response variables. 
 
 
 ### Supplementary Materials
