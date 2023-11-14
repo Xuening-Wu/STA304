@@ -35,64 +35,9 @@ census_data <- read_csv("gss_clean.csv")
 
 <Optional: You can also include a description of each section of this report as a last paragraph.>
 
-```{r}
-survey_data %>% group_by(cps21_votechoice) %>% summarise(n = n())
-```
-
-```{r}
-survey_data %>% group_by(cps21_province) %>% summarise(n = n())
-census_data %>% group_by(province) %>% summarise(n = n())
-```
-o Alberta (1)
-o British Columbia (2)
-o Manitoba (3)
-o New Brunswick (4)
-o Newfoundland and Labrador (5)
-o Northwest Territories (6) reject
-o Nova Scotia (7)
-o Nunavut (8) reject
-o Ontario (9)
-o Prince Edward Island (10)
-o Quebec (11)
-o Saskatchewan (12)
-o Yukon (13) reject
-
-
-
-```{r}
-survey_data %>% group_by(cps21_age) %>% summarise(n = n())
-census_data %>% group_by(age) %>% summarise(n = n())
-```
-
-
-```{r}
-
-df_sv_income <- tibble(x=survey_data$cps21_income_number) # famaily income
-
-ggplot(data = df_sv_income, aes(x = x)) +
-  geom_histogram(bins = 1000,fill = "blue", color = "black") +
-  xlim(c(-1000,1000000)) +
-  labs(title = "Histogram",
-       x = "Value",
-       y = "Frequency")
-
-df_ces_income <- census_data %>% group_by(income_family) %>% summarise(n = n()) # famaily income
-
-ggplot(df_ces_income, aes(x = income_family, y = n)) +
-  geom_bar(stat = "identity", fill = "grey") +
-  labs(title = "Bar Plot",
-       x = "Category",
-       y = "Value") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-df_ces_income 
-```
-
 
 
 ## Data
-
-<Type here a paragraph introducing the data, its context and as much info about the data collection process that you know.>
-
 
 ```{r, include = FALSE}
 
@@ -228,7 +173,7 @@ census_data_clean <- census_data %>%
 
 <Include a description of the important variables.> 
 
-```{r}
+```{r, echo=FALSE}
 
 # Use this to calculate some summary measures. 
 df_agetest <-
@@ -246,7 +191,7 @@ ggplot(df_agetest,
   theme_minimal() 
 ```
 
-```{r}
+```{r, echo=FALSE}
 tablesex <-
   survey_data_clean %>%
   group_by(sex) %>%
@@ -257,7 +202,7 @@ kable(tablesex, caption = "Summary of Support for Liberal Party by Gender")
 ```
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
 df_incometest <-
   survey_data_clean %>%   
   group_by(income_family, province) %>% 
@@ -278,7 +223,7 @@ ggplot(df_incometest, aes(x=Index, y=p))+
 
 <Include a description of the numerical summaries. Remember you can use `r ` to use inline R code.>
 
-```{r, echo = TRUE, fig.width=7, fig.height=2, fig.align='center'}
+```{r, echo = F, fig.width=7, fig.height=2, fig.align='center'}
 
 # Use this to create some plots. Should probably describe both the sample and population.
 
@@ -297,7 +242,7 @@ kable(cbind(survey_province_prop[,1], survey_province_prop[,3], census_province_
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 library(ggplot2)
 library(gridExtra)
 survey_age_prop <- 
@@ -538,7 +483,7 @@ census_data_counts$estimate_ndp <-
 
 Then, we calculated the $\hat{y}^{P S}$ for the three major political parties, i.e., Liberal, Conservative, and NPD. The results were shown in the following table: 
 
-```{r}
+```{r echo=FALSE}
 census_table <- census_data_counts %>% 
   mutate(liberal_predict_prop = estimate_liberal*n,
          Conservative_predict_prop = estimate_Conservative*n,
