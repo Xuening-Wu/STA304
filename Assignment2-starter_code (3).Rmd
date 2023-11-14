@@ -10,7 +10,8 @@ output:
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
-#install.packages("report")
+install.packages("report")
+install.packages("sjPlot")
 library(report)   
 library(sjPlot)
 library(openintro)
@@ -423,7 +424,7 @@ report_table(mod2)[,1:9]
 
 ## Post-Stratification 
 
-$$Post-stratification is a technique used in survey analysis to improve the accuracy of estimates by adjusting for differences in non-probability sampling and non-response bias. It involves dividing the population into strata based on certain characteristics (variables) and then weighting the observations in each stratum to account for different estimates and sum them up to get a overall average.$$
+Post-stratification is a technique used in survey analysis to improve the accuracy of estimates by adjusting for differences in non-probability sampling and non-response bias. It involves dividing the population into strata based on certain characteristics (variables) and then weighting the observations in each stratum to account for different estimates and sum them up to get a overall average.
 
 In our logistic regression with random-effect on intercept for predicting voting proportion, we can apply post-stratification.
 
