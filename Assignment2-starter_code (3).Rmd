@@ -39,6 +39,16 @@ census_data <- read_csv("gss_clean.csv")
 
 ## Data
 
+## Data collection process:
+
+The data collection process for this research project involved several key stages to ensure the integrity and coherence of the dataset used for analysis:
+
+1. Survey Codebook Analysis: The initial step involved a detailed examination of the "Canadian Election Study 2021 Survey Codebook." This resource was utilized to identify specific questions and data variables believed to have a significant impact on the outcomes of the Canadian election.
+
+2. Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook.
+
+3. Data Alignment and Validation:  The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
+
 ```{r, include = FALSE}
 
 # Here you can load in and clean the census data (you may need to do the cleaning in a separate R script). 
@@ -51,8 +61,6 @@ census_data <- read_csv("gss_clean.csv")
 ```
 
 
-
-<Type here a summary of the cleaning process (**only add in stuff beyond my original gss_cleaning.R code**). You only need to describe additional cleaning that you and your group did.> ] You will need to describe the cleaning you do to the survey data as well. 
 
 
 ```{r, include = FALSE}
@@ -92,17 +100,6 @@ load('ces2021.RData')
 
 
 ```
-
-## Data collection process:
-
-The data collection process for this research project involved several key stages to ensure the integrity and coherence of the dataset used for analysis:
-
-1. Survey Codebook Analysis: The initial step involved a detailed examination of the "Canadian Election Study 2021 Survey Codebook." This resource was utilized to identify specific questions and data variables believed to have a significant impact on the outcomes of the Canadian election.
-
-2. Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook.
-
-3. Data Alignment and Validation:  The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
-
 
 
 ```{r, include = FALSE}
@@ -211,6 +208,8 @@ Two clean datasets were created:
 4. Remove rows with missing values.
 
 
+
+
 ## Description of Important Variables:
 
 
@@ -228,14 +227,6 @@ Two clean datasets were created:
 
 ***sex:*** This variable categorizes respondents by gender.  Respondents are grouped into "Male" and "Female" categories.
 
-
-
-
-<Remember, you may want to use multiple datasets here, if you do end up using multiple data sets, or merging the data, be sure to describe this in the cleaning process and be sure to discuss important aspects of all the data that you used.>
-
-
-
-<Include a description of the important variables.> 
 
 ```{r, echo=FALSE}
 
@@ -292,8 +283,6 @@ The graph's content is derived from a dataset that has been summarized and group
 This graph is valuable because it provides a clear visual representation of how income and province impact the average level of support for the Liberal Party. It allows for the identification of regions or income brackets where the party enjoys stronger support.
 
 
-
-<Include a description of the numerical summaries. Remember you can use `r ` to use inline R code.>
 
 ```{r, echo = F, fig.width=7, fig.height=2, fig.align='center'}
 
