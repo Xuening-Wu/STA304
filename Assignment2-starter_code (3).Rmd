@@ -97,11 +97,11 @@ load('ces2021.RData')
 
 The data collection process for this research project involved several key stages to ensure the integrity and coherence of the dataset used for analysis:
 
-Survey Codebook Analysis: The initial step involved a detailed examination of the "Canadian Election Study 2021 Survey Codebook." This resource was utilized to identify specific questions and data variables believed to have a significant impact on the outcomes of the Canadian election.
+1. Survey Codebook Analysis: The initial step involved a detailed examination of the "Canadian Election Study 2021 Survey Codebook." This resource was utilized to identify specific questions and data variables believed to have a significant impact on the outcomes of the Canadian election.
 
-Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook.
+2. Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook.
 
-Data Alignment and Validation:  The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
+3. Data Alignment and Validation:  The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
 
 
 
