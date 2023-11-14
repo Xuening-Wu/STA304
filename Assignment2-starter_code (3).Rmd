@@ -607,6 +607,21 @@ More importantly, our predictions were consistent with the real-world situation.
 
 4. OpenAI. (2023). *ChatGPT (September 13 version) [Large language model]*. [https://chat.openai.com/chat](https://chat.openai.com/chat) (Last Accessed: September 13, 2023)
 
+[5] Wang, W., Rothschild, D., Goel, S., & Gelman, A. (2015). Forecasting elections with non-representative polls. International Journal of Forecasting, 31(3), 980-991.
+
+[6] Belyadi, H., & Haghighat, A. (2021). Machine Learning Guide for Oil and Gas Using Python: a step-by-step breakdown with data, algorithms, codes, and applications. Gulf Professional Publishing.
+
+[7] Stephenson, Laura B., Allison Harell, Daniel Rubenson and Peter John Loewen. The 2021 Canadian Election Study. [dataset]
+
+[8] Downes, M., Gurrin, L. C., English, D. R., Pirkis, J., Currier, D., Spittal, M. J., & Carlin, J. B. (2018). Multilevel regression and poststratification: a modeling approach to estimating population quantities from highly selected survey samples. American journal of epidemiology, 187(8), 1780-1790.
+
+[9] Møller, B. (2003). National, societal and human security: Discussion—Case study of the Israel-Palestine conflict. In Security and Environment in the Mediterranean: Conceptualising Security and Environmental Conflicts (pp. 277-288). Berlin, Heidelberg: Springer Berlin Heidelberg.
+
+[10] Linzer, D. A. (2014). The future of election forecasting: More data, better technology. PS: Political Science & Politics, 47(2), 326-328.
+
+[11] Mario Canseco. (2023, September 7). Conservative Party Holds Six-Point Lead Over Liberals in Canada. Retrieved from Researchco: https://researchco.ca/2023/09/07/cdnpoli-sept2023/
+
+
 \newpage
 
 ## Appendix
