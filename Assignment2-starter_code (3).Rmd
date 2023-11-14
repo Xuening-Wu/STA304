@@ -213,7 +213,12 @@ Two clean datasets were created:
 
 ## Description of Important Variables:
 
-***vote_choice: ***
+
+***vote_liberal:*** Binary variable indicating whether the respondent supports the Liberal Party (1 for support, 0 for not).
+
+***vote_Conservative:*** Binary variable indicating whether the respondent supports the Conservative Party (1 for support, 0 for not).
+
+***vote_ndp:*** Binary variable indicating whether the respondent supports the New Democratic Party (NDP) (1 for support, 0 for not).
 
 ***province:***This variable categorizes respondents based on their province of residence within Canada. 
 
