@@ -594,7 +594,8 @@ More importantly, our predictions were consistent with the real-world situation.
 
 ## Generative AI Statement
 
-I used the following generative artificial intelligence (AI) tool: ChatGPT [4]. 
+I used the following generative artificial intelligence (AI) tool: ChatGPT by OpenAI, (ChatGPT 2023) 
+Version 3.5. Accessed October 6th, 2023. 
 
 We used the tool in the introduction section of this assignment: \
 With the prompt of `What are 3 major political parties in canada?` \
