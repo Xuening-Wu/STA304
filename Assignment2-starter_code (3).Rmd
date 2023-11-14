@@ -581,7 +581,25 @@ Our results are plausible both methodologically and practically. From the method
 
 More importantly, our predictions were consistent with the real-world situation. For example, results from 2019 Canadian Election were that the Liberal Party won the election with the largest proportion of votes (39.47%), followed by the Conservative Party (31.89%) and the NDP (19.71%). The trend showed in 2019 election results was identical to the trend in our prediction. Therefore, with calibrated statistical methods and real-world confirmations, our predictions should be of relatively high reliability and plausibility. 
 
+```{r, include = FALSE}
 
+# Here you can include some relevant visualizations.
+census_data_ex <- census_data_clean %>% 
+  group_by(age, province,income_family) %>% 
+  summarise(n=n(), .groups = "drop")
+
+census_data_ex$estimate <-
+  mod2 %>%
+  predict(newdata = census_data_ex, type = "response")
+
+census_data_ex %>% group_by(province,income_family) %>%
+  summarise(support_rate = mean(estimate)) %>%
+  arrange(support_rate) %>% head(n=7)
+
+census_data_ex %>% group_by(province,income_family) %>%
+  summarise(support_rate = mean(estimate)) %>%
+  arrange(desc(support_rate)) %>% head(n=7)
+```
 
 ## Conclusions
 
