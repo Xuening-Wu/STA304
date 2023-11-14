@@ -365,9 +365,13 @@ $\beta_1$ to $\beta_8$ are the coefficients of these variables.
 
 Since we want to fit a logistic regression with random-effect on intercept, we will have the following assumptions: 
 
-Linearity of the Log-Odds: The logistic link function used in the model assumes that the relationship between the predictors and the log-odds of the response variable is linear. 
+The response variable is binary: We are very certain that the survey data satisfies this assumption.
 
-Independence of Observations: Each observation in the dataset should be independent of the others.
+Independence of Observations: We believe that each observation in the dataset should be independent of the others.
+
+No muticollinearity issue: Since all of our variables are categorical, we believe there is no such issue.
+
+No outilers issues: 
 
 Appropriate Random Effects Structure: The specification of random effects, in this case, (1|province:income_family), should accurately reflect the structure of the data. We need to ensure that it is justified and that it accounts for any correlations or nesting in the data
 
