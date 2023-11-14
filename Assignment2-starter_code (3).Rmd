@@ -369,9 +369,7 @@ The response variable is binary: We are very certain that the survey data satisf
 
 Independence of Observations: We believe that each observation in the dataset should be independent of the others.
 
-No muticollinearity issue: Since all of our variables are categorical, we believe there is no such issue.
-
-No outilers issues: 
+No muticollinearity issue and No outilers issues: Since all of our variables are categorical, we believe there are no such issues.
 
 Appropriate Random Effects Structure: The specification of random effects, in this case, (1|province:income_family), should accurately reflect the structure of the data. We need to ensure that it is justified and that it accounts for any correlations or nesting in the data
 
