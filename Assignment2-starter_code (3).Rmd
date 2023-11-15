@@ -356,7 +356,7 @@ p2 <-
 
 grid.arrange(p1, p2, ncol = 1)
 ```
-The graph above offers a visual representation of the distribution of respondents across different age groups for the survey dataset and census datset. The x-axis of the graph categorizes respondents into distinct age groups and the y-axis represents the proportion of respondents within each age group in the survey and census dataset. 
+The graph above offers a visual representation of the distribution of respondents across different age groups for both survey dataset and census datset. The x-axis of the graph categorizes respondents into distinct age groups and the y-axis represents the proportion of respondents within each age group in the survey and census dataset. 
 
 It help us visualize the distribution of participants across different age categories between the survey and census dataset, which is crucial for identifying potential biases in the survey data so that reminding us adjust for differences in non-probability sampling and non-response bias. 
 
