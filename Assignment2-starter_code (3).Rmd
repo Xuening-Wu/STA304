@@ -631,17 +631,18 @@ From the table of Top 7 support rate for liberal party, liberal party have highe
 
 ## Conclusions
 
-<Here you should give a summary of the Hypotheses, Methods and Results>
+In our analysis, we performed MRP with logistic regression to predict election results. Specifically, we hypothesized that age, sex, family income, and provinces will be potent predictors for forecasting voting results. We therefore constructed our model with these key predictors and dropped the redundant variable, sex, to simplify our model. For each model, we had a binary outcome variable, voting vs not voting. Since we were generating predictions for the three major political parties in Canada, we built three models for predicting their shares of votes respectively. According to our results, Liberal party is predicted to win the election with `r census_clean$liberal_predict * 100`% votes, exceeding the votes for all other major political parties in Canada. Detailed demographic analyses suggested that people with middle or higher family income and people who live in Ontario, Nova Scotia, and New Brunswick were more likely to vote for the Liberal party. 
 
-<Highlight Key Results.>
+Our work contributed to the election forecast in both statistical and political aspects. First, our work demonstrated an exemplified attempt to address the problems with complicated data sets like the election prediction datasets. Specifically, we employed MRP which accounts for variations at both individual and group levels and allows us to poststratify the population and to precisely model the votes from each stratum. This helps mitigate the influences of non-representative samples in generalizing predictions to population. Second, our work forecasted the proportions of votes for the three major political parties in Canada, contributing to the understanding and awareness of public opinions and requests. 
 
-<Talk about big picture.>
+In this prediction there are some limitations as following:
+Throughout the data cleaning process, certain variables were  dropped or merged. Specifically, we removed some variables with missing data, which could cause some bias. To compare between survey data and census data, certain variables were merged. For example, the variable "family income" initially represented the income number for each individual in the survey data and income categories in the census data. In order to do the comparison, we mapped the income numbers from the survey data to corresponding income categories.
+The available ces-survey data is from 2021, while gss-census data dates are from 2017. Given our projection for 2025, the lack of recent data updates poses challenges, potentially leading to inaccuracies in forecasts related to population shifts or unforeseen events.
+Our predictive model relies on a limited set of predictors, namely "province," "income families," and "age." This simplicity may result in a less complex model that overlooks crucial predictors, such as education level.
 
-<Comment on any Weaknesses.>
+In the future, we can add more predictor variables, including but not limited to education level, employment status, etc. At the same time, expand the result variables, such as adding parties. This approach can provide insights into the trends and preferences of specific political parties. In terms of data update, in order to make the model more relevant to time, we will seek the latest survey data sets of multiple years. This can more accurately reflect political dynamics, population changes, etc., and potentially improve the model's predictive accuracy. Frequency-based methods are currently used, and we are keen to explore Bayesian methods in the future. This shift could provide a more flexible framework to adjust forecasts based on emerging data.
 
-<Comment on Future Work/Next Steps>
-
-<End with a concluding paragraph to wrap up the report.>
+In conclusion, our analysis used MRP to model and predict election results. Our results suggested that Liberal party is likely to win the election with the highest share of votes, which were consistent with and supported by real-world situations. Nonetheless, we are aware of the limitations of our analysis and suggested ways to address these limitations in future analyses. 
 
 
 ## Bibliography
