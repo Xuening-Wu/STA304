@@ -548,7 +548,7 @@ mod2_ndp <-
 
 ```
 
-With our final model determined, we then performed poststratification using population demographics. As described in the Methods Section, we poststratified our population with respects to age groups, provinces, and family incomes. Hence, we had a total of $8 * 6 * 12 = 576$ strata (8 age groups, 6 levels of family income, 12 provinces). The estimated means ($\widehat{y}_{j}$) for each stratum ($j$) were calculated, but due to the large number of strata, we will not present the estimates. *should we attach the census_data_counts? if so, mention supplementary material section*
+With our final model determined, we then performed poststratification using population demographics. As described in the Methods Section, we poststratified our population with respects to age groups, provinces, and family incomes. Hence, we had a total of $8 * 6 * 12 = 576$ strata (8 age groups, 6 levels of family income, 12 provinces). The estimated means ($\widehat{y}_{j}$) for each stratum ($j$) were calculated, but due to the large number of strata, we will only include a glimpse of the voting estimates for each strata in the Supplementary Materials Section. 
 
 ```{r, include=FALSE}
 
@@ -683,15 +683,25 @@ From the table of Top 7 support rate for liberal party, liberal party have highe
 
 ## Generative AI Statement
 
-I used the following generative artificial intelligence (AI) tool: ChatGPT by OpenAI, (ChatGPT 2023) 
-Version 3.5. Accessed in September, 2023. 
+We used the following generative artificial intelligence (AI) tool: ChatGPT by OpenAI, (ChatGPT 2023) Version 3.5. Accessed in September, 2023. We used it several times in our analysis report, which includes: 
 
 We used the tool in the introduction section of this assignment: \
 With the prompt of `What are 3 major political parties in canada?` \
-ChatGPT rely us: `Liberal Party and Conservative Party and the New Democratic Party`. 
-Then we use this as one of the reference to choose response variables. 
+ChatGPT replied us: `Liberal Party and Conservative Party and the New Democratic Party`. 
+Then we use this as one of the references to select our response variables. 
+
+We used the tool in the Data section of this assignment: \
+With the prompt of `How to use case_when() when I want everything else to be "Others"?` \
+ChatGPT replied us: it introduced case_when() function and showed us an example use of the case_when() function. The useful help is the line of code `TRUE ~ "Others"`, when we then used in our data cleaning to simplify our work. 
+
+We used the tool in the Results section of this assignment: \
+With the prompt of `How to add row headers to a kable?` \
+ChatGPT replied us: it showed us an example of using kable to add row names, with the key function `add_rownames()`
 
 
 ### Supplementary Materials
+Below is part of the table for the estimated votes from each of the stratum:
+```{r}
+glimpse(census_data_counts)
+```
 
-<Here you can include any additional plots, tables, derivations, etc.>
