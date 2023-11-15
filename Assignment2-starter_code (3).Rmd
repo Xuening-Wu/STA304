@@ -28,14 +28,31 @@ census_data <- read_csv("gss_clean.csv")
 
 ## Introduction
 
-<Here you should have a few paragraphs of text introducing the problem, getting the reader interested/ready for the rest of the report.>
+Politics, though appearing far away, is arguably extremely close to individuals’ daily lives since political changes can have considerable impacts on individuals’ daily lives. For example, economic policies influence the amount of taxes that individuals pay, fiscal policies can significantly influence education and health care qualities, and policies towards other countries may even pose threats to people’s safety and security as the result of national tensions and conflicts [9]. Despite being the key stakeholders, most individuals do not have direct access to political decision-making except for voting. Hence, voting becomes a very important way for citizens to express their political attitudes and for political leaders to understand the needs and requests of the public. 
 
-<Introduce terminology.>
+With its significance and uniqueness, voting has caught wide attention from researchers in various fields. Statisticians, for instance, are extending their interests in studying trends in fields like finance and biomedicals to trends in political votings. Specifically, statisticians are interested in identifying trends and relationships among individuals’ voting choices and a series of auxiliary variables (e.g., age, gender, and area of residence) [10]. The identified relationships among the variables allow statistically informed inferences about the public opinions to be generated, providing valuable insights for politicians, and facilitating welfare-maximizing policies [10].
 
-<Highlight hypotheses.>
+However, generating accurate predictions is extremely challenging, especially for complicated large-scale datasets like voting datasets. There are two main reasons for the problem: (1) Voting behaviors are influenced by too many factors, including income levels, education, sex and gender, race and ethnicity, and areas of residence. Not only does each factor have certain impacts on people’s political attitudes and voting behaviors, but these factors also interact with each other and impact voting behaviors on aggregate. Imagine a person from Ontario who has a low income vs a person of the same income level but is from Quebec, it is likely that their voting choices will be completely different. (2) For many times, it is extremely hard to recruit a representative sample of the target population because of the complicated demographic compositions as well as the varied non-response rates. Such sample non-representativeness and non-response negatively impacts the accuracy of extrapolating predictions from samples to the entire population [8]. 
 
-<Optional: You can also include a description of each section of this report as a last paragraph.>
+To tackle this problem, we plan to use a statistical tool that accounts for the two difficulties. Specifically, it allows us to (1) build models based on variations in individual voters and variations with respect to different groups (e.g., age groups) and (2) to adjust our model’s predictions according to population demographics [8]. To prepare you for understanding further analyses, we will introduce the terminologies and materials that will be used in the following report: 
 
+* Statistical Tool: 
+** Multilevel Regression Poststratification (MRP): it combines Multilevel Regression and Poststratification to generate predictions. Specifically, “it poststratifies the population into a large number of cells based on combinations of various demographic attributes, use the sample to estimate the outcome of interest within each cell by fitting a multilevel regression model, and finally aggregate the cell-level estimates up to a population-level estimate by weighting each cell by its relative proportion in the population.” [5]
+** Logistic Regression: it is an algorithm used for binary classification problems [6], which models the relationship between predictor variables and a binary response variable, e.g., vote or not. 
+
+* Materials/ Datasets
+** Survey Dataset: Canadian Election Study (CES) 2021 Survey will be used as the survey dataset [7]. It collected survey participants’ demographic variables and their voting preferences, which allows us to model voting behaviors based on various demographic attributes. 
+** Census Dataset: General Social Survey (GSS) will be used as the census dataset. It contains population demographics of the general Canadian population, which helps us to poststratify the population. 
+
+* Variables of Interest
+** Predictor Variables: Age, Sex, Province, Family Income level. (These five predictor variables were selected based on data availability and plausibility). 
+** Response Variables: Votes. To accurately predict the winning political party, we will fit 3 models for votes for the 3 major political parties [11], Liberal, Conservative, New Democratic Party (NDP), respectively. 
+
+We choose Liberal party, Conservative party and NDP as our 3 response variables because these parties have the highest support rate in current years [11]. Thus, predicting these 3 responses can help us have a general prediction for the next election. 
+
+Through incorporating Logistic Regression with MRP, we aim to generate accurate election predictions. *We hypothesize that Age, Sex, Province, and Family Income level will be potent predictors in predicting the actual election results.*
+
+We will conduct thorough analysis to support our hypotheses. In the following report, we will first introduce the datasets that we used for model-building and prediction-generating with data cleaning and preliminary analysis results presented. We will then showcase the methods used according to the data features. We will present our predictions in the results section. Finally, we will conclude the analysis with a brief discussion on our results. 
 
 
 ## Data
