@@ -225,9 +225,6 @@ Two clean datasets were created:
 
 4. Remove rows with missing values.
 
-
-
-
 ## Description of Important Variables:
 
 
@@ -299,7 +296,6 @@ The graph titled "Mean Support Rate for Liberal Party by Income and Province" vi
 The graph's content is derived from a dataset that has been summarized and grouped by both income family and province. For each combination of income and province, the mean support rate for the Liberal Party is calculated. This allows for the identification of variations in support rate based on the income levels and provinces of respondents. 
 
 This graph is valuable because it provides a clear visual representation of how income and province impact the average level of support for the Liberal Party. It allows for the identification of regions or income brackets where the party enjoys stronger support. Thus, multilevel regression may be a good choice in this case. 
-
 
 
 ```{r, echo = F, fig.width=7, fig.height=2, fig.align='center'}
