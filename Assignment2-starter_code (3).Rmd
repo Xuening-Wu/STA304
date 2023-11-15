@@ -46,9 +46,9 @@ The data collection process for this research project involved several key stage
 
 1. Survey Codebook Analysis: The initial step involved a detailed examination of the "Canadian Election Study 2021 Survey Codebook." This resource was utilized to identify specific questions and data variables believed to have a significant impact on the outcomes of the Canadian election.
 
-2. Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook.
+2. Data Extraction from Census Data: Subsequently, an exploration of the "gss_clean.csv" file within the census data was carried out. The objective was to identify and extract data variables that corresponded to those found in the survey codebook. This step ensured that the data collected from the census data source was aligned with the variables of interest identified in the survey codebook, so that we can use Census Data to predict election using model fitted by survey data.
 
-3. Data Alignment and Validation:  The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
+3. Data Alignment and Validation: The process was verifying that the data extracted from the census data aligned in meaning and context with the variables outlined in the survey codebook. This validation step aimed to eliminate discrepancies and confirm that the data collected accurately represented the intended information.
 
 ```{r, include = FALSE}
 
@@ -182,17 +182,17 @@ Two clean datasets were created:
 
 ***For  “survey_data_clean”:***
 
-1. Filter the "survey_data" to include only respondents who are 18 years of age or older and have citizenship status equal to 1, indicating citizenship "By birth."
+1. Filter the "survey_data" to include only respondents who are 18 years of age or older and have citizenship status equal to 1, indicating the person has citizenship in Canada.
 
-2. Create binary variables "vote_liberal", "vote_Conservative", and "vote_ndp" based on the values in the "cps21_votechoice" variable, indicating whether a respondent voted for the Liberal, Conservative, or NDP parties.
+2. Create binary variables "vote_liberal", "vote_Conservative", and "vote_ndp" based on the values in the "cps21_votechoice" variable, indicating whether a respondent voted for the Liberal, Conservative, or NDP parties. (Yes = 1, No = 0)
 
-3. Map the values in the "cps21_province" variable to corresponding province names to ensure consistency and name it "province".
+3. Map the values in the "cps21_province" variable. To corresponding province to ensure consistency with the Census data, we dropped the people in Northwest Territories, Nunavut, and Yukon. And name it "province". 
 
 4. Categorize respondents' ages into predefined age ranges and name it "age".
 
-5. Map income values from "cps21_income_number" to income categories and name it "income_family" .
+5. Map family income from "cps21_income_number" to income groups and name it "income_family" .
 
-6. Map gender values from "cps21_genderid" to "Male" and "Female." Then name it "sex".
+6. Map gender from "cps21_genderid" to "Male" and "Female" and remove those who respond as non-binary. Then name it "sex".
 
 7. Select specific variables of interest, including the three binary vote variables, “province”, “age”, “income_family”, and “sex”.
 
@@ -200,7 +200,7 @@ Two clean datasets were created:
 
 
 ***For  “census_data_clean”:***
-1. Filter the “census_data” to include only respondents who are 18 years of age or older and have citizenship status "By birth" or "By naturalization."
+1. Filter the “census_data” to include only respondents who are 18 years of age or older and have citizenship status "By birth" or "By naturalization", indicating the person has citizenship in Canada.
 
 2. Categorize visitors' ages into predefined age ranges. The age ranges is consistent with cleaned survey data.
 
@@ -226,7 +226,7 @@ Two clean datasets were created:
 
 ***income_family:*** This variable classifies respondents based on their family income levels, providing insights into the relationship between income and voting behavior. Income categories include "Less than $25,000," "$25,000 to $49,999," "$50,000 to $74,999," "$75,000 to $99,999," "$100,000 to $124,999," and "$125,000 and more."
 
-***sex:*** This variable categorizes respondents by gender.  Respondents are grouped into "Male" and "Female" categories.
+***sex:*** This variable categorizes respondents by sex.  Respondents are grouped into "Male" and "Female" two categories.
 
 
 ```{r, echo=FALSE}
@@ -246,7 +246,7 @@ ggplot(df_agetest,
        y = "Age group") +  # Flip x and y axis labels
   theme_minimal() 
 ```
-The graph titled "Age vs. Mean Support Rate for Liberal Party" offers a detailed perspective on the relationship between age groups and their respective mean support rates for the Liberal Party in a Canadian election. From age "18-25" to age "35-40", there is a growing level of support, from approximately 17% to 28%.  Respondents aged "40-45" demonstrated a support rate of around 25%, showing a slight decrease in support compared to the previous age category. In the age "45-55" , support for the Liberal Party rebounded, with approximately 26% of respondents favoring this political choice. Then the level of support is growing to 30% at age "65 and more".
+The graph titled "Age vs. Mean Support Rate for Liberal Party" offers a detailed perspective on the relationship between age groups and their respective mean support rates for the Liberal Party from survey data. From age "18-25" to age "35-40", there is a growing level of support, from approximately 17% to 28%. Respondents aged "40-45" demonstrated a support rate of around 25%, showing a slight decrease in support compared to the previous age category. In the age "45-55" , support for the Liberal Party rebounded, with approximately 26% of respondents favoring this political choice. Then the level of support is growing to 30% at age "65 and more". Overall, different age groups have different mean support rates for Liberal Party.
 
 
 ```{r, echo=FALSE}
@@ -258,7 +258,7 @@ tablesex <-
             "Support rate" = sum(vote_liberal)/Counts)
 kable(tablesex, caption = "Summary of Support for Liberal Party by Gender")
 ```
-The table "Summary of Support for Liberal Party by Gender" offers a comprehensive overview of support for the Liberal Party in a Canadian election, categorized by gender. This table illustrates that there is no significant difference in support for the Liberal Party between men and women, respectively 27.4% and 26.3%. 
+The table "Summary of Support for Liberal Party by Gender" offers a comprehensive overview of support for the Liberal Party in a Canadian election, categorized by sex. This table illustrates that there is no significant difference in support for the Liberal Party between men and women, respectively 27.4% and 26.3%. 
 
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -277,11 +277,11 @@ ggplot(df_incometest, aes(x=Index, y=p))+
   theme_minimal()
   
 ```
-The graph titled "Mean Support Rate for Liberal Party by Income and Province" visually presents key insights regarding the level of support for the Liberal Party within the context of income and province. The x-axis of the graph is labeled as "Row Index," indicating the position of each data point within the dataset. The y-axis is labeled as "Mean Support Rate," representing the average level of support for the Liberal Party.
+The graph titled "Mean Support Rate for Liberal Party by Income and Province" visually presents key insights regarding the level of support for the Liberal Party within the different combinations of income and province. The x-axis of the graph is labeled as "Row Index," each row index indicating one combination of income and province. The y-axis is labeled as "Mean Support Rate," representing the average level of support for the Liberal Party in each gourp.
 
-The graph's content is derived from a dataset that has been summarized and grouped by both income family and province. For each combination of income and province, the mean support rate for the Liberal Party is calculated. This allows for the identification of variations in support based on the income levels and provinces of respondents. 
+The graph's content is derived from a dataset that has been summarized and grouped by both income family and province. For each combination of income and province, the mean support rate for the Liberal Party is calculated. This allows for the identification of variations in support rate based on the income levels and provinces of respondents. 
 
-This graph is valuable because it provides a clear visual representation of how income and province impact the average level of support for the Liberal Party. It allows for the identification of regions or income brackets where the party enjoys stronger support.
+This graph is valuable because it provides a clear visual representation of how income and province impact the average level of support for the Liberal Party. It allows for the identification of regions or income brackets where the party enjoys stronger support. Thus, multilevel regression may be a good choice in this case. 
 
 
 
@@ -302,13 +302,11 @@ census_province_prop <-
 
 kable(cbind(survey_province_prop[,1], survey_province_prop[,3], census_province_prop[,3]), caption = "Proportion of Respondents by Province in Survey and Census Data")
 ```
-The table titled 'Proportion of Respondents by Province in Survey and Census Data' offers a comparative view of the distribution of respondents across different provinces based on data collected from both survey and census sources. The table categorizes respondents by province, representing their geographical location within Canada.
+The table titled 'Proportion of Respondents by Province in Survey and Census Data' offers a comparative view of the distribution of respondents across different provinces based on data collected from both survey and census sources.
 
-The columns 'Proportion in Survey Data' and 'Proportion in Census Data' calculate the proportion of respondents from the survey data for each province, showing the share of participants within each region in the survey dataset and census dataset, respectively.
+This table plays a crucial role in the analysis because by examining the proportion of respondents by province in both survey and census data, which can help us assess the accuracy and completeness of the survey dataset, and potential need for adjusting differences in non-probability sampling and non-response bias. 
 
-This table plays a crucial role in the analysis because by examining the proportion of respondents by province in both survey and census data, readers can assess the accuracy and completeness of the survey dataset, adjusting for differences in non-probability sampling and non-response bias. 
-
-Survey data may not be representative for population therefore  multilevel regression with post-stratification may be helpful.
+From the table we can see significant difference of shares between survey data and census data. Survey data may not be representative for population therefore multilevel regression with post-stratification may be helpful.
 
 
 ```{r, echo=FALSE}
@@ -326,8 +324,6 @@ census_age_prop <-
 
 age_prop <-
   cbind(survey_age_prop[,1], survey_age_prop[,3], census_age_prop[,3])
-
-age_prop
 
 p1 <-
   ggplot(age_prop, aes(x=age, y=`propotion in survey data`))+
@@ -347,11 +343,11 @@ p2 <-
 
 grid.arrange(p1, p2, ncol = 1)
 ```
-The graph titled "The Proportion of Each Age Group in Survey Data" offers a visual representation of the distribution of respondents across different age groups within the survey dataset. The x-axis of the graph categorizes respondents into distinct age groups and the y-axis represents the proportion of respondents within each age group in the survey dataset. 
+The graph above offers a visual representation of the distribution of respondents across different age groups for the survey dataset and census datset. The x-axis of the graph categorizes respondents into distinct age groups and the y-axis represents the proportion of respondents within each age group in the survey and census dataset. 
 
-This graph serves as a fundamental reference point for understanding the age composition of survey respondents. It can visualize the distribution of survey participants across different age categories, which is crucial for identifying potential biases in the sample and adjusting for differences in non-probability sampling and non-response bias. By examining the proportion of each age group in the survey data,  the dataset will be accurate and representative.
+It help us visualize the distribution of participants across different age categories between the survey and census dataset, which is crucial for identifying potential biases in the survey data so that reminding us adjust for differences in non-probability sampling and non-response bias. 
 
-
+However, from the graph, there is no significant difference in the age distribution between two datasets. Thus, age can be considered as a dependent variable instead of mutilevel effect in our model.
 
 ## Methods 
 To predict which parties will win the election, we fit a logistic regression with random-effect on intercept using the glmer function from the "lme4" package and logit as link function.
