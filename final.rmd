@@ -697,6 +697,6 @@ ChatGPT replied us: it showed us an example of using kable to add row names, wit
 ### Supplementary Materials
 Below is part of the table for the estimated votes from each of the stratum:
 ```{r echo=FALSE}
-kable(glimpse(census_data_counts))
+glimpse(census_data_counts)
 ```
 
