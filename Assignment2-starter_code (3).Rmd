@@ -557,6 +557,16 @@ census_data_counts$estimate_ndp <-
 Then, we calculated the $\hat{y}^{P S}$ for the three major political parties, i.e., Liberal, Conservative, and NPD. The results were shown in the following table: 
 
 ```{r echo=FALSE}
+census_table1 <- census_data_counts %>% 
+  mutate(liberal_predict_prop = estimate_liberal*n,
+         Conservative_predict_prop = estimate_Conservative*n,
+         ndp_predict_prop = estimate_ndp*n) %>%
+  summarise(liberal_predict = sum(liberal_predict_prop)/sum(n), #proportions
+            Conservative_predict = sum(Conservative_predict_prop)/sum(n),
+            ndp_predict = sum(ndp_predict_prop)/sum(n)
+            )
+
+
 census_table <- census_data_counts %>% 
   mutate(liberal_predict_prop = estimate_liberal*n,
          Conservative_predict_prop = estimate_Conservative*n,
@@ -575,18 +585,18 @@ census_table <- census_data_counts %>%
 kable(census_table)
 ```
 
-As can be seen from the table, our models predicted that there will be `r liberal_predict * 100`% voters voting for the Liberal Party, `r Conservative_predict * 100`% voting for the Conservative Party, and `r ndp_predict * 100`% voting for the NDP. Together, the three major political parties take approximately `r (liberal_predict + Conservative_predict + ndp_predict) *100`% of the total votes, suggesting little likelihood that other parties will have votes higher than any of the three. Therefore, the prediction indicates that the Liberal Party is the most likely party to win the election because it has the largest predicted proportion of voters voting for them. 
+As can be seen from the table, our models predicted that there will be `r census_table1$liberal_predict * 100`% voters voting for the Liberal Party, `r census_table1$Conservative_predict * 100`% voting for the Conservative Party, and `r census_table1$ndp_predict * 100`% voting for the NDP. Together, the three major political parties take approximately `r (census_table1$liberal_predict + census_table1$Conservative_predict + census_table1$ndp_predict) *100`% of the total votes, suggesting little likelihood that other parties will have votes higher than any of the three. Therefore, the prediction indicates that the Liberal Party is the most likely party to win the election because it has the largest predicted proportion of voters voting for them. 
 
 Our results are plausible both methodologically and practically. From the methodological perspective, we carefully selected our potential predictor variables and calibrated our model by removing redundant variable(s). Further, we employed multi-level regression method when building our model, which takes random variations at both individual and group levels (e.g., age groups), enabling precise pinpoints at the estimates. When generating prediction, we stratified the population with respect to all of the three predictor variables (i.e., age groups, provinces, and levels of income). With the thorough and refined methods, we are confident with our predictions. 
 
 More importantly, our predictions were consistent with the real-world situation. For example, results from 2019 Canadian Election were that the Liberal Party won the election with the largest proportion of votes (39.47%), followed by the Conservative Party (31.89%) and the NDP (19.71%). The trend showed in 2019 election results was identical to the trend in our prediction. Therefore, with calibrated statistical methods and real-world confirmations, our predictions should be of relatively high reliability and plausibility. 
 
-```{r, include = FALSE}
+```{r, echo=F, message=F}
 
 # Here you can include some relevant visualizations.
 census_data_ex <- census_data_clean %>% 
   group_by(age, province,income_family) %>% 
-  summarise(n=n(), .groups = "drop")
+  summarise(n=n()) %>% ungroup()
 
 census_data_ex$estimate <-
   mod2 %>%
@@ -594,12 +604,21 @@ census_data_ex$estimate <-
 
 census_data_ex %>% group_by(province,income_family) %>%
   summarise(support_rate = mean(estimate)) %>%
-  arrange(support_rate) %>% head(n=7)
+  arrange(support_rate) %>% head(n=7) %>% 
+  rename('family income' = income_family) %>% 
+  rename('support rate' = support_rate) %>% kable(caption = "Lowest 7 support rate for liberal party")
 
 census_data_ex %>% group_by(province,income_family) %>%
   summarise(support_rate = mean(estimate)) %>%
-  arrange(desc(support_rate)) %>% head(n=7)
+  arrange(desc(support_rate)) %>% head(n=7) %>% 
+  rename('family income' = income_family) %>% 
+  rename('support rate' = support_rate) %>% kable(caption = "Top 7 support rate for liberal party")
 ```
+From the table of Lowest 7 support rate for liberal party, we notice that people in Saskatchewan and Alberta	are not a supporter of the Liberals, especially for the people with low income.
+
+
+From the table of Top 7 support rate for liberal party, liberal party have highest support rate at Nova Scotia, New Brunswick and Ontario. It is noticeable that middle upper class and people with high income are more likely to vote liberal party. 
+
 
 ## Conclusions
 
